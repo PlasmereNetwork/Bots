@@ -20,13 +20,12 @@ package co.templex.bots;
 
 import co.templex.bots.ban.BanlistModule;
 import co.templex.bots.chat.ChatModule;
+import co.templex.bots.initialize.InitializationModule;
 import co.templex.bots.lib.discord.Bot;
 import co.templex.bots.lib.discord.ListenerFactory;
 import co.templex.bots.lib.discord.Module;
 import co.templex.bots.lib.minecraft.ScreenWriter;
 import co.templex.bots.op.OplistModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -43,12 +42,9 @@ import java.util.concurrent.CountDownLatch;
 @SuppressWarnings("WeakerAccess")
 public class Main {
 
-    /**
-     * Logger for the Main class. This is used solely for startup errors, such as missing properties files.
-     */
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final List<Module> availableModules = Arrays.asList(new BanlistModule(), new ChatModule(), new OplistModule(), new InitializationModule());
 
-    private static final List<Module> availableModules = Arrays.asList(new BanlistModule(), new ChatModule(), new OplistModule());
+    private static final List<String> enabledModules = new ArrayList<>();
 
     /**
      * Hidden constructor. Instantiation of this class is not permitted.
@@ -80,10 +76,21 @@ public class Main {
             if (Boolean.parseBoolean(bot.getProperty(module.getName() + "-enabled", "false"))) {
                 module.initialize(bot, writer);
                 listeners.addAll(module.setup());
+                enabledModules.add(module.getName());
             }
         }
         bot.start(listeners);
         shutdownLatch.await();
     }
 
+    public static String getEnabledModules() {
+        if (enabledModules.size() == 0) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder(enabledModules.get(0));
+        for (int i = 1; i < enabledModules.size(); i++) {
+            builder.append(',').append(enabledModules.get(i));
+        }
+        return builder.toString();
+    }
 }
