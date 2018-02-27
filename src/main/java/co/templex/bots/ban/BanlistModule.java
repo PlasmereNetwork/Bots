@@ -1,0 +1,47 @@
+/*
+ * Bots: A Discord bot that manages the Templex server.
+ * Copyright (C) 2018  vtcakavsmoace
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package co.templex.bots.ban;
+
+import co.templex.bots.lib.discord.ListenerFactory;
+import co.templex.bots.lib.discord.Module;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class BanlistModule extends Module {
+
+    public BanlistModule() {
+        super("ban");
+    }
+
+    @Override
+    public List<ListenerFactory> setup() {
+        BanListener.Factory banListenerFactory = new BanListener.Factory(
+                getBot().getProperty("ban-reports", null)
+        );
+        PardonListener.Factory pardonListenerFactory = new PardonListener.Factory(
+                getBot().getProperty("ban-reports", null)
+        );
+        BanlistModificationCommand.Factory banListModificationCommandFactory = new BanlistModificationCommand.Factory(
+                Arrays.asList(getBot().getProperty("ban-channels", null).split(",")),
+                getWriter()
+        );
+        return Arrays.asList(banListenerFactory, pardonListenerFactory, banListModificationCommandFactory);
+    }
+}
