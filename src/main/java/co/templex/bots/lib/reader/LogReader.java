@@ -94,19 +94,16 @@ public class LogReader {
                                 reader = new BufferedReader(new FileReader(latestLog));
                             }
                             if (reader != null) {
-                                logger.debug("Detected change in latest.log");
                                 CountDownLatch lock = lockListenerList();
                                 for (String line; (line = reader.readLine()) != null; ) {
                                     final String finalLine = line;
                                     for (final LineListener lineListener : lineListeners) {
                                         listenerThread.submit(() -> {
                                             lineListener.onLine(finalLine);
-                                            logger.debug("Executed onLine for line listener " + lineListener.getClass().getSimpleName());
                                         });
                                     }
                                 }
                                 lock.countDown();
-                                logger.debug("Finished listener loop.");
                             }
                         }
                     }

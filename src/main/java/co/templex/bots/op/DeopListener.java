@@ -50,8 +50,10 @@ public class DeopListener extends ChannelWriter implements LineListener {
             line = line.substring(33);
             String[] splitLine = line.split(": ");
             if (line.matches("Made .+ no longer a server operator")) {
+                logger.debug("Detected /op from console.");
                 reportDeop(splitLine[0].substring(5, splitLine[0].length() - 28), "Server");
             } else if (line.matches("\\[.*: Made .+ no longer a server operator]")) {
+                logger.debug("Detected /deop from server chat.");
                 reportDeop(splitLine[1].substring(5, splitLine[1].length() - 29), splitLine[0].substring(1));
             }
         }

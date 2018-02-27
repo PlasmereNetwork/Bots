@@ -50,8 +50,10 @@ public class OpListener extends ChannelWriter implements LineListener {
             line = line.substring(33);
             String[] splitLine = line.split(": ");
             if (line.matches("Made .+ a server operator")) {
+                logger.debug("Detected /op from console.");
                 reportOp(splitLine[0].substring(5, splitLine[0].length() - 18), "Server");
             } else if (line.matches("\\[.*: Made .+ a server operator]")) {
+                logger.debug("Detected /op from server chat.");
                 reportOp(splitLine[1].substring(5, splitLine[1].length() - 19), splitLine[0].substring(1));
             }
         }
