@@ -42,7 +42,7 @@ public final class Bot {
     private final DiscordAPI discordAPI;
     private final LogReader reader;
 
-    public Bot(@NonNull Properties properties, CountDownLatch shutdownLatch) {
+    public Bot(@NonNull Properties properties, @NonNull CountDownLatch shutdownLatch) {
         this.properties = properties;
         this.discordAPI = Javacord.getApi(Objects.requireNonNull(properties.getProperty("token")), true);
         this.reader = new LogReader(shutdownLatch);
@@ -50,7 +50,9 @@ public final class Bot {
 
     public String getProperty(@NonNull String key, String defaultValue) {
         logger.info("Attempted to fetch property " + key);
-        return properties.getProperty(key, defaultValue);
+        String value = properties.getProperty(key, defaultValue);
+        logger.info("Found value " + value + " for property " + key);
+        return value;
     }
 
     public void start(@NonNull List<ListenerFactory> registerOnConnect) {
