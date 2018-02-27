@@ -56,7 +56,7 @@ public class InitializationListener implements Listener {
             message.getChannelReceiver().sendMessage("", generateEmbedBuilder(
                     "Templex Discord Bot",
                     "Initialization time: " + ManagementFactory.getRuntimeMXBean().getUptime() + " ms\n" +
-                            "Latency: " + (moment / 1000000) + " ms\n" +
+                            "Latency: " + (-moment / 2000000) + " ms\n" +
                             "Enabled Modules: " + Main.getEnabledModules() + "\n" +
                             "Version: " + bot.getClass().getPackage().getImplementationVersion(),
                     null,
