@@ -21,10 +21,14 @@ package co.templex.bots.lib.discord;
 import co.templex.bots.lib.minecraft.ScreenWriter;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public abstract class Module {
+
+    private static final Logger logger = LoggerFactory.getLogger(Module.class);
 
     @Getter
     private final String name;
@@ -38,6 +42,7 @@ public abstract class Module {
     }
 
     public void initialize(Bot bot, ScreenWriter writer) {
+        logger.info("Initialized module " + this.getClass().getSimpleName());
         this.bot = bot;
         this.writer = writer;
     }
