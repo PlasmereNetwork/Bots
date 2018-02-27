@@ -56,12 +56,15 @@ public class LogReader {
     }
 
     public void start() {
+        logger.debug("Starting LogReader.");
         if (!running.getAndSet(true)) {
             readThread.submit(this::readLoop);
+            logger.debug("Successfully started.");
         }
     }
 
     private void readLoop() {
+        logger.debug("Read loop initiated.");
         try {
             Path path = Paths.get(System.getProperty("user.dir"), "logs");
             File latestLog = new File(path.toFile(), "latest.log");
@@ -142,8 +145,10 @@ public class LogReader {
     }
 
     public void stop() {
+        logger.debug("Attempting to stop LogReader.");
         if (running.get()) {
             readThread.shutdownNow();
+            logger.debug("Successfully shut down LogReader.");
         }
     }
 
