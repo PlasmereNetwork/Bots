@@ -39,7 +39,7 @@ public class ScreenWriter {
         try {
             CountDownLatch lock = lockChat();
             try {
-                String executedCommand = String.format("./write_to_server %s", encoder.encodeToString((line + "\n").getBytes()));
+                String executedCommand = String.format("./write_to_server %s", encoder.encodeToString(line.getBytes()));
                 logger.info(String.format("Executing raw command \"%s\"", executedCommand));
                 Runtime.getRuntime().exec(executedCommand).waitFor();
             } catch (IOException e) {
