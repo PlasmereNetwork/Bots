@@ -41,6 +41,7 @@ public class OplistModificationCommand extends Command {
 
     @Override
     public void onMatch(Message message) {
+        message.delete();
         writer.println(message.getContent().substring(1));
     }
 

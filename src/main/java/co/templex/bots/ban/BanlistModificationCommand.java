@@ -41,6 +41,7 @@ public class BanlistModificationCommand extends Command {
 
     @Override
     public void onMatch(Message message) {
+        message.delete();
         writer.println(message.getContent().substring(1));
     }
 
