@@ -77,7 +77,7 @@ public class Main {
         ScreenWriter writer = new ScreenWriter();
         List<ListenerFactory> listeners = new ArrayList<>();
         for (Module module : availableModules) {
-            if (Boolean.getBoolean(bot.getProperty(module.getName() + "-enabled", "false"))) {
+            if (Boolean.parseBoolean(bot.getProperty(module.getName() + "-enabled", "false"))) {
                 module.initialize(bot, writer);
                 listeners.addAll(module.setup());
             }
