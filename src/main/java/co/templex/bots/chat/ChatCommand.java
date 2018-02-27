@@ -45,7 +45,7 @@ public class ChatCommand extends Command {
             writer.println(
                     String.format(
                             "tellraw @a [\"\",{\"text\":\"[\"},{\"text\":\"Discord\",\"color\":\"dark_purple\"},{\"text\":\": %s] %s\",\"color\":\"none\"}]",
-                            message.getAuthor().getNickname(message.getChannelReceiver().getServer()),
+                            message.getAuthor().getName(),
                             message.getContent()
                     )
             );
