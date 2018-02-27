@@ -18,7 +18,6 @@
 
 package co.templex.bots.lib.discord;
 
-import co.templex.bots.lib.discord.debug.DebugMessageCreateListener;
 import co.templex.bots.lib.reader.LineListener;
 import co.templex.bots.lib.reader.LogReader;
 import com.google.common.util.concurrent.FutureCallback;
@@ -64,7 +63,6 @@ public final class Bot {
                 for (ListenerFactory factory : registerOnConnect) {
                     registerListener(factory);
                 }
-                discordAPI.registerListener(new DebugMessageCreateListener());
                 discordAPI.setGame("with the fates of users.");
                 logger.info("Successfully connected.");
             }
