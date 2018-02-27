@@ -41,13 +41,15 @@ public class ChatCommand extends Command {
 
     @Override
     public void onMatch(Message message) {
-        writer.println(
-                String.format(
-                        "tellraw @a [\"\",{\"text\":\"[\"},{\"text\":\"Discord\",\"color\":\"dark_purple\"},{\"text\":\": %s] %s\",\"color\":\"none\"}]",
-                        message.getAuthor().getNickname(message.getChannelReceiver().getServer()),
-                        message.getContent()
-                )
-        );
+        if (!message.getAuthor().isYourself()) {
+            writer.println(
+                    String.format(
+                            "tellraw @a [\"\",{\"text\":\"[\"},{\"text\":\"Discord\",\"color\":\"dark_purple\"},{\"text\":\": %s] %s\",\"color\":\"none\"}]",
+                            message.getAuthor().getNickname(message.getChannelReceiver().getServer()),
+                            message.getContent()
+                    )
+            );
+        }
     }
 
     @Value
