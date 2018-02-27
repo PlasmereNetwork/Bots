@@ -18,6 +18,7 @@
 
 package co.templex.bots.lib.discord;
 
+import co.templex.bots.lib.discord.debug.DebugMessageCreateListener;
 import co.templex.bots.lib.reader.LineListener;
 import co.templex.bots.lib.reader.LogReader;
 import com.google.common.util.concurrent.FutureCallback;
@@ -52,12 +53,17 @@ public final class Bot {
     }
 
     public void start(@NonNull List<ListenerFactory> registerOnConnect) {
+        logger.info("Attempting connection.");
         discordAPI.connect(new FutureCallback<DiscordAPI>() {
             @Override
             public void onSuccess(DiscordAPI result) {
+                Runtime.getRuntime().addShutdownHook(new Thread(Bot.this::shutdown));
                 for (ListenerFactory factory : registerOnConnect) {
                     registerListener(factory);
                 }
+                discordAPI.registerListener(new DebugMessageCreateListener());
+                discordAPI.setGame("with the fates of users.");
+                logger.info("Successfully connected.");
             }
 
             @Override
@@ -68,11 +74,13 @@ public final class Bot {
     }
 
     public void shutdown() {
+        logger.info("Shutting down...");
         discordAPI.disconnect();
         reader.stop();
+        logger.info("Successfully shut down.");
     }
 
-    public void registerListener(ListenerFactory factory) {
+    private void registerListener(ListenerFactory factory) {
         Listener listener = factory.generateListener(this, new ChannelFactory(discordAPI));
         if (listener != null) {
             if (listener instanceof LineListener) {
@@ -80,6 +88,7 @@ public final class Bot {
             } else {
                 discordAPI.registerListener(listener);
             }
+            logger.info("Registered a " + listener.getClass().getSimpleName());
         }
     }
 

@@ -145,9 +145,16 @@ public class LogReader {
     public boolean register(@NonNull Listener lineListener) {
         if (lineListener instanceof LineListener) {
             try {
-                CountDownLatch lock = lockListenerList();
-                lineListeners.add((LineListener) lineListener);
-                lock.countDown();
+                CountDownLatch lock = null;
+                try {
+                    lock = lockListenerList();
+                    lineListeners.add((LineListener) lineListener);
+                    logger.info("Registered listener of type " + lineListener.getClass().getSimpleName());
+                } finally {
+                    if (lock != null) {
+                        lock.countDown();
+                    }
+                }
                 return true;
             } catch (InterruptedException e) {
                 logger.error("Interrupt during listener registration.", e);
@@ -160,9 +167,17 @@ public class LogReader {
         if (lineListener instanceof LineListener) {
             try {
                 boolean success;
-                CountDownLatch lock = lockListenerList();
-                success = lineListeners.remove(lineListener);
-                lock.countDown();
+                CountDownLatch lock = null;
+                try {
+                    lock = lockListenerList();
+                    if (success = lineListeners.remove(lineListener)) {
+                        logger.info("Unregistered listener of type " + lineListener.getClass().getSimpleName());
+                    }
+                } finally {
+                    if (lock != null) {
+                        lock.countDown();
+                    }
+                }
                 return success;
             } catch (InterruptedException e) {
                 logger.error("Interrupt during listener de-registration.", e);

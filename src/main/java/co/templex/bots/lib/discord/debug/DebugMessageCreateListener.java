@@ -16,32 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package co.templex.bots.lib.discord;
+package co.templex.bots.lib.discord.debug;
 
-import co.templex.bots.lib.minecraft.ScreenWriter;
-import lombok.AccessLevel;
-import lombok.Getter;
+import de.btobastian.javacord.DiscordAPI;
+import de.btobastian.javacord.entities.message.Message;
+import de.btobastian.javacord.listener.message.MessageCreateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
+public class DebugMessageCreateListener implements MessageCreateListener {
+    private static final Logger logger = LoggerFactory.getLogger(DebugMessageCreateListener.class);
 
-public abstract class Module {
-
-    @Getter
-    private final String name;
-    @Getter(AccessLevel.PROTECTED)
-    private Bot bot;
-    @Getter(AccessLevel.PROTECTED)
-    private ScreenWriter writer;
-
-    public Module(String name) {
-        this.name = name;
+    @Override
+    public void onMessageCreate(DiscordAPI discordAPI, Message message) {
+        logger.info(String.format(
+                "Got message from channel %s with content '%s",
+                message.getChannelReceiver().getName(),
+                message.getContent()
+        ));
     }
-
-    public void initialize(Bot bot, ScreenWriter writer) {
-        this.bot = bot;
-        this.writer = writer;
-    }
-
-    public abstract List<ListenerFactory> setup();
-
 }
