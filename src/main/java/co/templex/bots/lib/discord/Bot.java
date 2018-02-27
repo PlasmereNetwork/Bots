@@ -63,6 +63,7 @@ public final class Bot {
                 for (ListenerFactory factory : registerOnConnect) {
                     registerListener(factory);
                 }
+                reader.start();
                 discordAPI.setGame("with the fates of users.");
                 logger.info("Successfully connected.");
             }
