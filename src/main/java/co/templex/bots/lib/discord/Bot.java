@@ -49,6 +49,7 @@ public final class Bot {
     }
 
     public String getProperty(@NonNull String key, String defaultValue) {
+        logger.info("Attempted to fetch property " + key);
         return properties.getProperty(key, defaultValue);
     }
 

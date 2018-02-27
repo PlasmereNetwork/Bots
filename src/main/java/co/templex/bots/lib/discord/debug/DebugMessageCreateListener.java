@@ -30,7 +30,7 @@ public class DebugMessageCreateListener implements MessageCreateListener {
     @Override
     public void onMessageCreate(DiscordAPI discordAPI, Message message) {
         logger.info(String.format(
-                "Got message from channel %s with content '%s",
+                "Got message from channel %s with content '%s'",
                 message.getChannelReceiver().getName(),
                 message.getContent()
         ));
