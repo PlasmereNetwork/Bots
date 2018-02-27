@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/banbot/banbot.iml" filepath="$PROJECT_DIR$/.idea/modules/banbot/banbot.iml" group="banbot" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/bots.iml" filepath="$PROJECT_DIR$/.idea/modules/bots.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/bots_main.iml" filepath="$PROJECT_DIR$/.idea/modules/bots_main.iml" group="bots" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bots_test.iml" filepath="$PROJECT_DIR$/.idea/modules/bots_test.iml" group="bots" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/chatbot/chatbot.iml" filepath="$PROJECT_DIR$/.idea/modules/chatbot/chatbot.iml" group="chatbot" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/lib/lib.iml" filepath="$PROJECT_DIR$/.idea/modules/lib/lib.iml" group="lib" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/main/main.iml" filepath="$PROJECT_DIR$/.idea/modules/main/main.iml" group="main" />

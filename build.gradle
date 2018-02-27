@@ -31,6 +31,8 @@ repositories {
     }
 }
 
+mainClassName = 'co.templex.bots.Main'
+
 dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
     compile group: 'com.intellij', name: 'annotations', version: '12.0'
