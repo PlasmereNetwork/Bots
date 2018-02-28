@@ -37,7 +37,7 @@ public class ChatListener extends ChannelWriter implements LineListener {
     public void onLine(String line) {
         if (line.length() > 33) { // ex. "[03:05:13] [Server thread/INFO]: "
             line = line.substring(33);
-            if (line.charAt(0) == '<' || line.matches("[^ <>]+ joined the game")) {
+            if (line.charAt(0) == '<' || line.matches("[^ <>]+ (joined|left) the game")) {
                 getReportChannel().sendMessage(line);
             }
         }
