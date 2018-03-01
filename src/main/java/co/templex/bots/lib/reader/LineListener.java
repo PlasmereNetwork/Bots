@@ -20,7 +20,6 @@ package co.templex.bots.lib.reader;
 
 import de.btobastian.javacord.listener.Listener;
 
-@FunctionalInterface
 public interface LineListener extends Listener {
     void onLine(String line);
 }

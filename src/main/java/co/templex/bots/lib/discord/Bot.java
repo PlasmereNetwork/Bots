@@ -28,6 +28,7 @@ import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -37,6 +38,8 @@ public final class Bot {
 
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
 
+    private final ArrayList<CustomListener> listeners;
+
     private final Properties properties;
     private final DiscordAPI discordAPI;
     private final LogReader reader;
@@ -45,6 +48,7 @@ public final class Bot {
         this.properties = properties;
         this.discordAPI = Javacord.getApi(Objects.requireNonNull(properties.getProperty("token")), true);
         this.reader = new LogReader(shutdownLatch);
+        this.listeners = new ArrayList<>();
     }
 
     public String getProperty(@NonNull String key, String defaultValue) {
@@ -78,6 +82,9 @@ public final class Bot {
     public void shutdown() {
         logger.info("Shutting down...");
         discordAPI.disconnect();
+        for (CustomListener listener : listeners) {
+            listener.shutdown();
+        }
         reader.stop();
         logger.info("Successfully shut down.");
     }
@@ -87,6 +94,8 @@ public final class Bot {
         if (listener != null) {
             if (listener instanceof LineListener) {
                 reader.register(listener);
+            } else if (listener instanceof CustomListener) {
+                listeners.add((CustomListener) listener);
             } else {
                 discordAPI.registerListener(listener);
             }

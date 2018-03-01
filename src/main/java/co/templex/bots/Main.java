@@ -25,6 +25,7 @@ import co.templex.bots.lib.discord.Bot;
 import co.templex.bots.lib.discord.ListenerFactory;
 import co.templex.bots.lib.discord.Module;
 import co.templex.bots.lib.minecraft.ScreenWriter;
+import co.templex.bots.living.LivingModule;
 import co.templex.bots.op.OplistModule;
 
 import java.io.FileInputStream;
@@ -42,7 +43,7 @@ import java.util.concurrent.CountDownLatch;
 @SuppressWarnings("WeakerAccess")
 public class Main {
 
-    private static final List<Module> availableModules = Arrays.asList(new BanlistModule(), new ChatModule(), new OplistModule(), new InitializationModule());
+    private static final List<Module> availableModules = Arrays.asList(new BanlistModule(), new ChatModule(), new OplistModule(), new InitializationModule(), new LivingModule());
 
     private static final List<String> enabledModules = new ArrayList<>();
 

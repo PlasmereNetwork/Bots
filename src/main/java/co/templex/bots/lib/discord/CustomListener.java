@@ -16,21 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package co.templex.bots.initialize;
+package co.templex.bots.lib.discord;
 
-import co.templex.bots.lib.discord.ListenerFactory;
-import co.templex.bots.lib.discord.Module;
+import de.btobastian.javacord.listener.Listener;
 
-import java.util.Collections;
-import java.util.List;
-
-public class InitializationModule extends Module {
-    public InitializationModule() {
-        super("init");
-    }
-
-    @Override
-    public List<ListenerFactory> setup() {
-        return Collections.singletonList(new InitializationListener.Factory());
-    }
+public interface CustomListener extends Listener {
+    void shutdown();
 }

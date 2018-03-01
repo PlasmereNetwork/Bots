@@ -16,32 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package co.templex.bots.op;
+package co.templex.bots.living;
 
 import co.templex.bots.lib.discord.ListenerFactory;
 import co.templex.bots.lib.discord.Module;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class OplistModule extends Module {
-
-    public OplistModule() {
-        super("op");
+public class LivingModule extends Module {
+    public LivingModule() {
+        super("living");
     }
 
     @Override
     public List<ListenerFactory> setup() {
-        OpListener.Factory opListenerFactory = new OpListener.Factory(
-                getBot().getProperty("op-reports", null)
-        );
-        DeopListener.Factory deopListenerFactory = new DeopListener.Factory(
-                getBot().getProperty("op-reports", null)
-        );
-        OplistModificationCommand.Factory oplistModificationCommandFactory = new OplistModificationCommand.Factory(
-                Arrays.asList(getBot().getProperty("op-channels", null).split(",")),
-                getWriter()
-        );
-        return Arrays.asList(opListenerFactory, deopListenerFactory, oplistModificationCommandFactory);
+        return Collections.singletonList(new LivingListener.Factory(
+                getBot().getProperty("living-channel", null),
+                getBot().getProperty("living-host", null),
+                Integer.parseInt(getBot().getProperty("living-port", "25565")),
+                Integer.parseInt(getBot().getProperty("living-timeout", "30")),
+                Integer.parseInt(getBot().getProperty("living-interval", "60")
+                )));
     }
 }
