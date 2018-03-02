@@ -19,9 +19,6 @@
 package co.templex.bots.living;
 
 import co.templex.bots.lib.discord.*;
-import com.google.common.collect.ContiguousSet;
-import com.google.common.collect.DiscreteDomain;
-import com.google.common.collect.Range;
 import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.listener.Listener;
 import lombok.NonNull;
@@ -53,27 +50,29 @@ public class LivingListener extends ChannelWriter implements CustomListener {
 
     private LivingListener(Channel reportChannel, String[] host, int[] port, int timeout, int interval) {
         super(reportChannel);
-        this.service = Executors.newScheduledThreadPool(host.length);
+        this.service = Executors.newSingleThreadScheduledExecutor();
         this.address = new InetSocketAddress[host.length];
         this.timeout = timeout;
         this.previous = new boolean[host.length];
         Arrays.fill(previous, true);
-        for (final int i : ContiguousSet.create(Range.closed(0, host.length - 1), DiscreteDomain.integers()).asList().toArray(new Integer[host.length])) {
+        for (int i = 0; i < host.length; i++) {
             this.address[i] = new InetSocketAddress(host[i], port[0]);
-            this.service.scheduleAtFixedRate(() -> query(i), interval, interval, TimeUnit.SECONDS);
         }
+        service.scheduleAtFixedRate(this::query, interval, interval, TimeUnit.SECONDS);
     }
 
-    private void query(final int index) {
-        logger.info(String.format("Attempting connection to host %s on port %d", address[index].getHostName(), address[index].getPort()));
-        Throwable e = null;
-        try (Socket socket = new Socket()) {
-            socket.connect(address[index], timeout);
-            logger.info("Connection successful");
-        } catch (Throwable internal) {
-            e = internal;
+    private void query() {
+        for (int index = 0; index < address.length; index++) {
+            logger.info(String.format("Attempting connection to host %s on port %d", address[index].getHostName(), address[index].getPort()));
+            Throwable e = null;
+            try (Socket socket = new Socket()) {
+                socket.connect(address[index], timeout);
+                logger.info("Connection successful");
+            } catch (Throwable internal) {
+                e = internal;
+            }
+            report(index, e);
         }
-        report(index, e);
     }
 
     private void report(final int index, Throwable e) {
