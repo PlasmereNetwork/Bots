@@ -23,6 +23,7 @@ import co.templex.bots.lib.discord.Module;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class LivingModule extends Module {
     public LivingModule() {
@@ -30,11 +31,18 @@ public class LivingModule extends Module {
     }
 
     @Override
-    public List<ListenerFactory> setup() {
+    public List<ListenerFactory> setup() throws Exception {
         return Collections.singletonList(new LivingListener.Factory(
                 getBot().getProperty("living-channel", null),
-                getBot().getProperty("living-host", null),
-                Integer.parseInt(getBot().getProperty("living-port", "25565")),
+                getBot().getProperty("living-hosts", null).split(","),
+                ((Callable<int[]>) () -> {
+                    String[] portStrings = getBot().getProperty("living-ports", null).split(",");
+                    int[] returned = new int[portStrings.length];
+                    for (int i = 0; i < portStrings.length; i++) {
+                        returned[i] = Integer.parseInt(portStrings[i]);
+                    }
+                    return returned;
+                }).call(),
                 Integer.parseInt(getBot().getProperty("living-timeout", "30")),
                 Integer.parseInt(getBot().getProperty("living-interval", "60")
                 )));

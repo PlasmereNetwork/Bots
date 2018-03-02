@@ -47,6 +47,6 @@ public abstract class Module {
         this.writer = writer;
     }
 
-    public abstract List<ListenerFactory> setup();
+    public abstract List<ListenerFactory> setup() throws Exception;
 
 }

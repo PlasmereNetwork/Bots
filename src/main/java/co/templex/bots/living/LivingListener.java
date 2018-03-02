@@ -19,6 +19,9 @@
 package co.templex.bots.living;
 
 import co.templex.bots.lib.discord.*;
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
+import com.google.common.collect.Range;
 import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.listener.Listener;
 import lombok.NonNull;
@@ -34,7 +37,6 @@ import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static co.templex.bots.lib.discord.Util.generateEmbedBuilder;
 
@@ -43,47 +45,56 @@ public class LivingListener extends ChannelWriter implements CustomListener {
     private static final Logger logger = LoggerFactory.getLogger(LivingListener.class);
 
     private final ScheduledExecutorService service;
-    private final InetSocketAddress address;
+    private final InetSocketAddress[] address;
     private final int timeout;
 
-    private final AtomicBoolean previous;
+    private boolean previous;
 
-    private LivingListener(Channel reportChannel, String host, int port, int timeout, int interval) {
+    private LivingListener(Channel reportChannel, String[] host, int[] port, int timeout, int interval) {
         super(reportChannel);
-        this.service = Executors.newSingleThreadScheduledExecutor();
-        this.address = new InetSocketAddress(host, port);
+        this.service = Executors.newScheduledThreadPool(host.length);
+        this.address = new InetSocketAddress[host.length];
         this.timeout = timeout;
-        this.previous = new AtomicBoolean(true);
-        logger.info(
-                String.format(
-                        "Initializing listener for open checks performed on %s:%d with a timeout of %d and an interval of %d",
-                        host,
-                        port,
-                        timeout,
-                        interval
-                )
-        );
-        this.service.scheduleAtFixedRate(this::query, interval, interval, TimeUnit.SECONDS);
+        this.previous = true;
+        for (final int i : ContiguousSet.create(Range.closed(0, host.length - 1), DiscreteDomain.integers()).asList().toArray(new Integer[host.length])) {
+            this.address[i] = new InetSocketAddress(host[i], port[0]);
+            this.service.scheduleAtFixedRate(() -> query(i), interval, interval, TimeUnit.SECONDS);
+        }
     }
 
-    private void query() {
-        logger.info(String.format("Attempting connection to host %s on port %d", address.getHostName(), address.getPort()));
+    private void query(final int index) {
+        logger.info(String.format("Attempting connection to host %s on port %d", address[index].getHostName(), address[index].getPort()));
         Throwable e = null;
         try (Socket socket = new Socket()) {
-            socket.connect(address, timeout);
+            socket.connect(address[index], timeout);
             logger.info("Connection successful");
         } catch (Throwable internal) {
             e = internal;
         }
-        report(e);
+        report(index, e);
     }
 
-    private void report(Throwable e) {
-        if (previous.getAndSet(e == null) != (e == null)) {
-            String message;
+    private void report(final int index, Throwable e) {
+        String message;
+        if (e == null) {
+            message = String.format("Successfully connected to host %s on port %d", address[index].getHostName(), address[index].getPort());
+            logger.info(message);
+        } else {
+            if (e instanceof UnknownHostException) {
+                message = String.format("Failed to resolve host %s", address[index].getHostName());
+            } else if (e instanceof SocketTimeoutException) {
+                message = String.format("Connection timed out while attempting to connect to host %s on port %d", address[index].getHostName(), address[index].getPort());
+            } else if (e.getMessage().equals("Connection refused")) {
+                message = String.format("Connection refused to host %s on port %d", address[index].getHostName(), address[index].getPort());
+            } else if (e.getMessage().equals("Resource temporarily unavailable")) {
+                message = String.format("Resource temporarily unavailable (likely a mismatch in DNS entry) while connecting to host %s on port %d", address[index].getHostName(), address[index].getPort());
+            } else {
+                message = String.format("Unhandled Exception while connecting to host %s on port %d.\n\nSee Living Listener log for details.", address[index].getHostName(), address[index].getPort());
+            }
+            logger.warn(message, e);
+        }
+        if (previous != (previous = e == null)) {
             if (e == null) {
-                message = String.format("Successfully connected to host %s on port %d", address.getHostName(), address.getPort());
-                logger.info(message);
                 getReportChannel().sendMessage("", generateEmbedBuilder(
                         "Living Listener: All Clear",
                         message,
@@ -92,29 +103,16 @@ public class LivingListener extends ChannelWriter implements CustomListener {
                         null,
                         Color.GREEN
                 ));
-                return;
-            }
-            Color color = Color.RED;
-            if (e instanceof UnknownHostException) {
-                message = String.format("Failed to resolve host %s", address.getHostName());
-            } else if (e instanceof SocketTimeoutException) {
-                message = String.format("Connection timed out while attempting to connect to host %s on port %d", address.getHostName(), address.getPort());
-            } else if (e.getMessage().equals("Connection refused")) {
-                message = String.format("Connection refused to host %s on port %d", address.getHostName(), address.getPort());
-            } else if (e.getMessage().equals("Resource temporarily unavailable")) {
-                message = String.format("Resource temporarily unavailable (likely a mismatch in DNS entry) while connecting to host %s on port %d", address.getHostName(), address.getPort());
             } else {
-                message = String.format("Unhandled Exception while connecting to host %s on port %d.\n\nSee Living Listener log for details.", address.getHostName(), address.getPort());
+                getReportChannel().sendMessage("", generateEmbedBuilder(
+                        "Living Listener: Alert!",
+                        String.format("Help, I've gone down and I can't get up!\n\n%s", message),
+                        String.format("%s while attempting connection.", e.getClass().getName()),
+                        null,
+                        null,
+                        Color.RED
+                ));
             }
-            logger.warn(message, e);
-            getReportChannel().sendMessage("", generateEmbedBuilder(
-                    "Living Listener: Alert!",
-                    String.format("Help, I've gone down and I can't get up!\n\n%s", message),
-                    String.format("%s thrown upon connection.", e.getClass().getName()),
-                    null,
-                    null,
-                    color
-            ));
         }
     }
 
@@ -127,8 +125,11 @@ public class LivingListener extends ChannelWriter implements CustomListener {
     public static class Factory implements ListenerFactory {
 
         @NonNull
-        String channelID, host;
-        int port, timeout, interval;
+        String channelID;
+        @NonNull
+        String[] host;
+        int[] port;
+        int timeout, interval;
 
         @Override
         public Listener generateListener(Bot bot, ChannelFactory factory) {

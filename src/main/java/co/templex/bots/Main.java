@@ -27,6 +27,8 @@ import co.templex.bots.lib.discord.Module;
 import co.templex.bots.lib.minecraft.ScreenWriter;
 import co.templex.bots.living.LivingModule;
 import co.templex.bots.op.OplistModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,6 +44,8 @@ import java.util.concurrent.CountDownLatch;
  */
 @SuppressWarnings("WeakerAccess")
 public class Main {
+
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private static final List<Module> availableModules = Arrays.asList(new BanlistModule(), new ChatModule(), new OplistModule(), new InitializationModule(), new LivingModule());
 
@@ -76,8 +80,12 @@ public class Main {
         for (Module module : availableModules) {
             if (Boolean.parseBoolean(bot.getProperty(module.getName() + "-enabled", "false"))) {
                 module.initialize(bot, writer);
-                listeners.addAll(module.setup());
-                enabledModules.add(module.getName());
+                try {
+                    listeners.addAll(module.setup());
+                    enabledModules.add(module.getName());
+                } catch (Exception e) {
+                    logger.warn("Unable to setup module " + module.getName(), e);
+                }
             }
         }
         bot.start(listeners);
