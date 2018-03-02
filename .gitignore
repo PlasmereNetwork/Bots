@@ -89,3 +89,6 @@ fabric.properties
 *.ser
 *.pem
 *.pub
+
+# For your protection
+/bot.properties
