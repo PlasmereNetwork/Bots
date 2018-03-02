@@ -53,7 +53,7 @@ public class LivingListener extends ChannelWriter implements CustomListener {
         this.service = Executors.newSingleThreadScheduledExecutor();
         this.address = new InetSocketAddress(host, port);
         this.timeout = timeout;
-        this.previous = new AtomicBoolean(false);
+        this.previous = new AtomicBoolean(true);
         logger.info(
                 String.format(
                         "Initializing listener for open checks performed on %s:%d with a timeout of %d and an interval of %d",
@@ -63,7 +63,7 @@ public class LivingListener extends ChannelWriter implements CustomListener {
                         interval
                 )
         );
-        this.service.scheduleAtFixedRate(this::query, 0, interval, TimeUnit.SECONDS);
+        this.service.scheduleAtFixedRate(this::query, interval, interval, TimeUnit.SECONDS);
     }
 
     private void query() {
