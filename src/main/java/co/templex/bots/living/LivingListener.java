@@ -34,6 +34,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -48,14 +49,15 @@ public class LivingListener extends ChannelWriter implements CustomListener {
     private final InetSocketAddress[] address;
     private final int timeout;
 
-    private boolean previous;
+    private boolean previous[];
 
     private LivingListener(Channel reportChannel, String[] host, int[] port, int timeout, int interval) {
         super(reportChannel);
         this.service = Executors.newScheduledThreadPool(host.length);
         this.address = new InetSocketAddress[host.length];
         this.timeout = timeout;
-        this.previous = true;
+        this.previous = new boolean[host.length];
+        Arrays.fill(previous, true);
         for (final int i : ContiguousSet.create(Range.closed(0, host.length - 1), DiscreteDomain.integers()).asList().toArray(new Integer[host.length])) {
             this.address[i] = new InetSocketAddress(host[i], port[0]);
             this.service.scheduleAtFixedRate(() -> query(i), interval, interval, TimeUnit.SECONDS);
@@ -93,7 +95,7 @@ public class LivingListener extends ChannelWriter implements CustomListener {
             }
             logger.warn(message, e);
         }
-        if (previous != (previous = e == null)) {
+        if (previous[index] != (previous[index] = e == null)) {
             if (e == null) {
                 getReportChannel().sendMessage("", generateEmbedBuilder(
                         "Living Listener: All Clear",
