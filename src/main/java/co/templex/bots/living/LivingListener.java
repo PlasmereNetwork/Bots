@@ -85,9 +85,9 @@ public class LivingListener extends ChannelWriter implements CustomListener {
                 message = String.format("Failed to resolve host %s", address[index].getHostName());
             } else if (e instanceof SocketTimeoutException) {
                 message = String.format("Connection timed out while attempting to connect to host %s on port %d", address[index].getHostName(), address[index].getPort());
-            } else if (e.getMessage().equals("Connection refused")) {
+            } else if (e.getMessage().startsWith("Connection refused")) {
                 message = String.format("Connection refused to host %s on port %d", address[index].getHostName(), address[index].getPort());
-            } else if (e.getMessage().equals("Resource temporarily unavailable")) {
+            } else if (e.getMessage().startsWith("Resource temporarily unavailable")) {
                 message = String.format("Resource temporarily unavailable (likely a mismatch in DNS entry) while connecting to host %s on port %d", address[index].getHostName(), address[index].getPort());
             } else {
                 message = String.format("Unhandled Exception while connecting to host %s on port %d.\n\nSee Living Listener log for details.", address[index].getHostName(), address[index].getPort());
