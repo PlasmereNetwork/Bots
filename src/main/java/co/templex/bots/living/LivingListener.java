@@ -56,7 +56,7 @@ public class LivingListener extends ChannelWriter implements CustomListener {
         this.previous = new boolean[host.length];
         Arrays.fill(previous, true);
         for (int i = 0; i < host.length; i++) {
-            this.address[i] = new InetSocketAddress(host[i], port[0]);
+            this.address[i] = new InetSocketAddress(host[i], port[i]);
         }
         service.scheduleAtFixedRate(this::query, interval, interval, TimeUnit.SECONDS);
     }
