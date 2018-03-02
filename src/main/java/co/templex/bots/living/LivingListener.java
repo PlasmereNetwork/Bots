@@ -66,7 +66,7 @@ public class LivingListener extends ChannelWriter implements CustomListener {
             logger.info(String.format("Attempting connection to host %s on port %d", address[index].getHostName(), address[index].getPort()));
             Throwable e = null;
             try (Socket socket = new Socket()) {
-                socket.connect(address[index], timeout);
+                socket.connect(address[index], timeout * 1000);
                 logger.info("Connection successful");
             } catch (Throwable internal) {
                 e = internal;
