@@ -25,6 +25,8 @@ import co.templex.bots.lib.discord.ListenerFactory;
 import de.btobastian.javacord.entities.Channel;
 import de.btobastian.javacord.entities.message.Message;
 import de.btobastian.javacord.listener.Listener;
+import lombok.NonNull;
+import lombok.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +48,12 @@ public class InitializationListener implements Listener {
     private final ExecutorService timeMeasurer = Executors.newSingleThreadExecutor();
     private final Bot bot;
     private final Channel channel;
+    private final String alias;
 
-    private InitializationListener(Bot bot, Channel channel) {
+    private InitializationListener(Bot bot, Channel channel, String alias) {
         this.bot = bot;
         this.channel = channel;
+        this.alias = alias;
         timeMeasurer.submit(this::initiateTimer);
     }
 
@@ -70,7 +74,7 @@ public class InitializationListener implements Listener {
             moment -= System.nanoTime();
             message.delete();
             message.getChannelReceiver().sendMessage("", generateEmbedBuilder(
-                    "Templex Discord Bot",
+                    String.format("Templex Discord Bot (running on %s)", alias),
                     "Initialization time: " + ManagementFactory.getRuntimeMXBean().getUptime() + " ms\n" +
                             "Latency: " + (-moment / 2000000) + " ms\n" +
                             "Enabled Modules: " + Main.getEnabledModules() + "\n" +
@@ -86,10 +90,15 @@ public class InitializationListener implements Listener {
         }
     }
 
+    @Value
     public static class Factory implements ListenerFactory {
+
+        @NonNull
+        String channelID, alias;
+
         @Override
         public Listener generateListener(Bot bot, ChannelFactory factory) {
-            return new InitializationListener(bot, factory.generateChannel(bot.getProperty("init-channel", null)));
+            return new InitializationListener(bot, factory.generateChannel(channelID), alias);
         }
     }
 

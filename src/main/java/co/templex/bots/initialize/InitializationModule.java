@@ -31,6 +31,11 @@ public class InitializationModule extends Module {
 
     @Override
     public List<ListenerFactory> setup() {
-        return Collections.singletonList(new InitializationListener.Factory());
+        return Collections.singletonList(
+                new InitializationListener.Factory(
+                        getBot().getProperty("init-channel", null),
+                        getBot().getProperty("init-alias", null)
+                )
+        );
     }
 }
