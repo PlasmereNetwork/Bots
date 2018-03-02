@@ -53,15 +53,26 @@ public class LivingListener extends ChannelWriter implements CustomListener {
         this.service = Executors.newSingleThreadScheduledExecutor();
         this.address = new InetSocketAddress(host, port);
         this.timeout = timeout;
-        this.service.scheduleAtFixedRate(this::query, 0, interval, TimeUnit.SECONDS);
         this.previous = new AtomicBoolean(false);
+        logger.info(
+                String.format(
+                        "Initializing listener for open checks performed on %s:%d with a timeout of %d and an interval of %d",
+                        host,
+                        port,
+                        timeout,
+                        interval
+                )
+        );
+        this.service.scheduleAtFixedRate(this::query, 0, interval, TimeUnit.SECONDS);
     }
 
     private void query() {
+        logger.info(String.format("Attempting connection to host %s on port %d", address.getHostName(), address.getPort()));
         Throwable e = null;
         try (Socket socket = new Socket()) {
             socket.setReuseAddress(true);
             socket.connect(address, timeout);
+            logger.info("Connection successful");
         } catch (Throwable internal) {
             e = internal;
         }
@@ -98,7 +109,7 @@ public class LivingListener extends ChannelWriter implements CustomListener {
             }
             logger.warn(message, e);
             getReportChannel().sendMessage("", generateEmbedBuilder(
-                    "Living Listener!",
+                    "Living Listener: Alert!",
                     String.format("Help, I've gone down and I can't get up!\n\n%s", message),
                     String.format("%s thrown upon connection.", e.getClass().getName()),
                     null,
