@@ -35,7 +35,7 @@ public class ChatCommand extends Command {
     private final ScreenWriter writer;
 
     private ChatCommand(List<String> channelIDs, ScreenWriter writer) {
-        super(channelIDs, ".+");
+        super(channelIDs, "[^.].+");
         this.writer = writer;
     }
 
