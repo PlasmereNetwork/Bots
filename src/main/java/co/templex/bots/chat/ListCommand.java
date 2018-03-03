@@ -40,6 +40,7 @@ public class ListCommand extends Command {
 
     @Override
     public void onMatch(Message message) {
+        message.delete();
         writer.println("list");
     }
 
