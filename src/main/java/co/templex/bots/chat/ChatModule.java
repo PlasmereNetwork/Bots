@@ -40,6 +40,13 @@ public class ChatModule extends Module {
                 Collections.singletonList(getBot().getProperty("chat-channel", null)),
                 getWriter()
         );
-        return Arrays.asList(chatListenerFactory, chatCommandFactory);
+        ListListener.Factory listListenerFactory = new ListListener.Factory(
+                getBot().getProperty("chat-channel", null)
+        );
+        ListCommand.Factory listCommandFactory = new ListCommand.Factory(
+                Collections.singletonList(getBot().getProperty("chat-channel", null)),
+                getWriter()
+        );
+        return Arrays.asList(chatListenerFactory, chatCommandFactory, listListenerFactory, listCommandFactory);
     }
 }
