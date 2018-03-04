@@ -92,7 +92,8 @@ public class LivingListener extends ChannelWriter implements CustomListener {
             }
             logger.warn(message, e);
         }
-        if (previous[index] != (previous[index] = e)) {
+        if ((previous[index] != null && e != null && previous[index].getMessage().equals((previous[index] = e).getMessage())) // Only compared and set to e if neither previous or e are non-null
+                        || (previous[index] != (previous[index] = e))) { // Check if previous is null, e not or vice versa and set previous
             if (e == null) {
                 getReportChannel().sendMessage("", generateEmbedBuilder(
                         "Living Listener: All Clear",
