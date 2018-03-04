@@ -37,7 +37,7 @@ public abstract class Module {
     @Getter(AccessLevel.PROTECTED)
     private ScreenWriter writer;
 
-    public Module(String name) {
+    protected Module(String name) {
         this.name = name;
     }
 

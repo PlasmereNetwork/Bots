@@ -24,7 +24,7 @@ public abstract class ChannelWriter {
 
     private final Channel reportChannel;
 
-    public ChannelWriter(Channel reportChannel) {
+    protected ChannelWriter(Channel reportChannel) {
         this.reportChannel = reportChannel;
     }
 

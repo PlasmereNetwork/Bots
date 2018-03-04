@@ -79,7 +79,7 @@ public final class Bot {
         });
     }
 
-    public void shutdown() {
+    private void shutdown() {
         logger.info("Shutting down...");
         discordAPI.disconnect();
         for (CustomListener listener : listeners) {

@@ -33,7 +33,7 @@ import java.awt.*;
 import static co.templex.bots.lib.discord.Util.generateEmbedBuilder;
 
 public class ListListener extends ChannelWriter implements LineListener {
-    public ListListener(Channel reportChannel) {
+    private ListListener(Channel reportChannel) {
         super(reportChannel);
     }
 

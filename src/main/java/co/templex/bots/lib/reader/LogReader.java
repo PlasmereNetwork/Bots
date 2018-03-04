@@ -98,9 +98,7 @@ public class LogReader {
                                 for (String line; (line = reader.readLine()) != null; ) {
                                     final String finalLine = line;
                                     for (final LineListener lineListener : lineListeners) {
-                                        listenerThread.submit(() -> {
-                                            lineListener.onLine(finalLine);
-                                        });
+                                        listenerThread.submit(() -> lineListener.onLine(finalLine));
                                     }
                                 }
                                 lock.countDown();
@@ -149,7 +147,7 @@ public class LogReader {
         }
     }
 
-    public boolean register(@NonNull Listener lineListener) {
+    public void register(@NonNull Listener lineListener) {
         if (lineListener instanceof LineListener) {
             try {
                 CountDownLatch lock = null;
@@ -162,36 +160,10 @@ public class LogReader {
                         lock.countDown();
                     }
                 }
-                return true;
             } catch (InterruptedException e) {
                 logger.error("Interrupt during listener registration.", e);
             }
         }
-        return false;
-    }
-
-    public boolean unregister(@NonNull Listener lineListener) {
-        if (lineListener instanceof LineListener) {
-            try {
-                boolean success;
-                CountDownLatch lock = null;
-                try {
-                    lock = lockListenerList();
-                    if (success = lineListeners.remove(lineListener)) {
-                        logger.info("Unregistered listener of type " + lineListener.getClass().getSimpleName());
-                    }
-                } finally {
-                    if (lock != null) {
-                        lock.countDown();
-                    }
-                }
-                return success;
-            } catch (InterruptedException e) {
-                logger.error("Interrupt during listener de-registration.", e);
-                return false;
-            }
-        }
-        return false;
     }
 
     private CountDownLatch lockListenerList() throws InterruptedException {

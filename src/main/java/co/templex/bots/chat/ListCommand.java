@@ -33,7 +33,7 @@ import java.util.List;
 public class ListCommand extends Command {
     private final ScreenWriter writer;
 
-    public ListCommand(List<String> channelIDs, ScreenWriter writer) {
+    private ListCommand(List<String> channelIDs, ScreenWriter writer) {
         super(channelIDs, "\\.list");
         this.writer = writer;
     }

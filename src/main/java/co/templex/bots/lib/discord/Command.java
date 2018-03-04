@@ -35,7 +35,7 @@ public abstract class Command implements MessageCreateListener {
     List<String> channelIDs;
     String regex;
 
-    public Command(List<String> channelIDs, @Language("RegExp") String regex) {
+    protected Command(List<String> channelIDs, @Language("RegExp") String regex) {
         this.channelIDs = Collections.unmodifiableList(channelIDs);
         this.regex = regex;
     }
@@ -47,6 +47,6 @@ public abstract class Command implements MessageCreateListener {
         }
     }
 
-    public abstract void onMatch(Message message);
+    protected abstract void onMatch(Message message);
 
 }
