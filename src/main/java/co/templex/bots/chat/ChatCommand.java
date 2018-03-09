@@ -96,8 +96,9 @@ public class ChatCommand extends Command {
             } else {
                 writer.println(
                         String.format(
-                                "tellraw @a [\"\",{\"text\":\"<\"},{\"text\":\"%s\",\"color\":\"dark_purple\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://discord.gg/4JBG3h2\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Said through the discord. Click to join!\"}]}}},{\"text\":\"> %s\",\"color\":\"none\"}]",
+                                "tellraw @a [\"\",{\"text\":\"<\"},{\"text\":\"Discord\",\"color\":\"dark_purple\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://discord.gg/4JBG3h2\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Click to join the TemplexMC official Discord server!\"}]}}},{\"text\":\": \",\"color\":\"dark_gray\"},{\"text\":\"%s\",\"color\":\"dark_aqua\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"%s\"}]}}},{\"text\":\"> %s\",\"color\":\"none\"}]",
                                 user.getUsername(),
+                                user.getUuid(),
                                 message.getContent()
                         )
                 );

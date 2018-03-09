@@ -17,7 +17,7 @@
  */
 
 group 'co.templex'
-version '2.2'
+version '2.2r1'
 
 apply plugin: 'application'
 apply plugin: 'java'
