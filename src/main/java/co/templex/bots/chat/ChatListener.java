@@ -24,11 +24,15 @@ import co.templex.bots.lib.discord.ChannelWriter;
 import co.templex.bots.lib.discord.ListenerFactory;
 import co.templex.bots.lib.reader.LineListener;
 import de.btobastian.javacord.entities.Channel;
+import de.btobastian.javacord.entities.User;
 import de.btobastian.javacord.listener.Listener;
 import lombok.NonNull;
 import lombok.Value;
 
+import java.util.HashMap;
+
 public class ChatListener extends ChannelWriter implements LineListener {
+
     private ChatListener(Channel reportChannel) {
         super(reportChannel);
     }
