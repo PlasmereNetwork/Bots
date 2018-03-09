@@ -91,7 +91,7 @@ public class ChatCommand extends Command {
                         message.reply(String.format("Error: Registration failed with reason: %s", response.getMessage()));
                     }
                 } else {
-                    message.reply("You need to register yourself before using MC chat!\nLogin to srv.mc-oauth.net and use the token in the register command like so:\n\n.register <token>");
+                    message.reply("You need to register yourself before using MC chat!\nLogin to srv.mc-oauth.net via Minecraft (v12.2 or below) and use the token in the register command like so:\n\n.register <token>");
                 }
             } else {
                 writer.println(
