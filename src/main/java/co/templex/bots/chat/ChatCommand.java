@@ -85,6 +85,7 @@ public class ChatCommand extends Command {
                     }
                     if (response instanceof SuccessfulOAuthResponse) {
                         registeredUsers.put(message.getAuthor().getId(), (SuccessfulOAuthResponse) response);
+                        message.reply("Successfully registered user " + ((SuccessfulOAuthResponse) response).getUsername());
                         saveRegisteredUsers();
                     } else {
                         message.reply(String.format("Error: Registration failed with reason: %s", response.getMessage()));
