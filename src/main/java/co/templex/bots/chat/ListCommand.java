@@ -34,14 +34,18 @@ public class ListCommand extends Command {
     private final ScreenWriter writer;
 
     private ListCommand(List<String> channelIDs, ScreenWriter writer) {
-        super(channelIDs, "\\.list");
+        super(channelIDs, "(\\.list|\\.since-reset)");
         this.writer = writer;
     }
 
     @Override
     public void onMatch(Message message) {
         message.delete();
-        writer.println("list");
+        if (message.getContent().equals(".list")) {
+            writer.println("list");
+        } else {
+            writer.println("scoreboard players get Players-This-Reset Stats");
+        }
     }
 
     @Value
