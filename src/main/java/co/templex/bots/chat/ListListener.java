@@ -51,7 +51,7 @@ public class ListListener extends ChannelWriter implements LineListener {
                         null,
                         Color.GREEN
                 ));
-            } else if (line.matches("Players-This-Reset has [0-9]+ \\[§3Templex §7Statistics§r]")) {
+            } else if (line.matches("Players-This-Reset has [0-9]+ \\[Templex Statistics]")) {
                 String[] splitLine = line.split(" ");
                 getReportChannel().sendMessage("", generateEmbedBuilder(
                         "Players Since Reset",
